@@ -1,0 +1,27 @@
+{
+  "name": "static-upload",
+  "version": "1.0.0",
+  "description": "",
+  "main": "./bin/index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "bin": {
+    "static-upload": "./bin/index.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "ali-oss": "^6.16.0",
+    "assert": "^2.0.0",
+    "cli-color": "^2.0.1",
+    "co": "^4.6.0",
+    "debug": "^4.3.2",
+    "globby": "^8.0.2",
+    "lodash": "^4.17.21",
+    "moment": "^2.29.1",
+    "qiniu": "^7.4.0",
+    "ssh2": "^1.5.0"
+  }
+}
