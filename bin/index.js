@@ -22,6 +22,13 @@ class StaticUpload {
       this.serveConfig && uploadProject(this.SeversConfig);
     }
   }
+  async yunServerUpload(){
+    if(this.serveConfig){
+      console.log('请配置云服务器相关信息')
+      return
+    }
+    uploadProject(this.serveConfig)
+  }
 
   startUpload() {
     // this.aliUpload()
