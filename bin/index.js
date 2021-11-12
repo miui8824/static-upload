@@ -12,14 +12,14 @@ class StaticUpload {
   async qiniuUpload() {
     const res = await qiniuUpload(this.QiniuConfig);
     if (res === 200) {
-      this.serveConfig && uploadProject(this.SeverConfig);
+      this.SeverConfig && uploadProject(this.SeverConfig);
     }
   }
 
   async aliUpload() {
     const res = await ossUpload(this.aliConfig);
     if (res && res.length !== 0) {
-      this.serveConfig && uploadProject(this.SeverConfig);
+      this.SeverConfig && uploadProject(this.SeverConfig);
     }
   }
   async yunServerUpload(){
