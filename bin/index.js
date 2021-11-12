@@ -4,7 +4,7 @@ const { uploadProject } = require('./upload');
 
 class StaticUpload {
   constructor({ serveConfig, QiniuConfig, aliConfig }) {
-    this.SeversConfig = serveConfig;
+    this.SeverConfig = serveConfig;
     this.QiniuConfig = QiniuConfig;
     this.aliConfig = aliConfig;
   }
@@ -12,22 +12,22 @@ class StaticUpload {
   async qiniuUpload() {
     const res = await qiniuUpload(this.QiniuConfig);
     if (res === 200) {
-      this.serveConfig && uploadProject(this.SeversConfig);
+      this.serveConfig && uploadProject(this.SeverConfig);
     }
   }
 
   async aliUpload() {
     const res = await ossUpload(this.aliConfig);
     if (res && res.length !== 0) {
-      this.serveConfig && uploadProject(this.SeversConfig);
+      this.serveConfig && uploadProject(this.SeverConfig);
     }
   }
   async yunServerUpload(){
-    if(this.serveConfig){
+    if(this.SeverConfig){
       console.log('请配置云服务器相关信息')
       return
     }
-    uploadProject(this.serveConfig)
+    uploadProject(this.SeverConfig)
   }
 
   startUpload() {
