@@ -16,27 +16,29 @@ const {staticUpload} = require('static-upload')
 
 **QiniuConfig** 七牛上传配置
 
-| 字段名       | 描述             |
-| ------------ | ---------------- |
-| *accessKey*  | 七牛accessKey    |
-| *secretKey*  | 七牛secretKey    |
-| *originPath* | 需要上传的目录   |
-| *filterFile* | 需要过滤的文件名 |
-| *zone*       | 七牛空间地域     |
-| *bucket*     | 七牛*bucket*     |
-| *debugFlag*  | 是否开启debug    |
+| 字段名            | 描述                                           |
+| ----------------- | :--------------------------------------------- |
+| *accessKey*       | 七牛accessKey                                  |
+| *secretKey*       | 七牛secretKey                                  |
+| *originPath*      | 需要上传的目录                                 |
+| *filterFiles*     | 需要过滤的文件名集合 默认:[],如:['index.html'] |
+| *zone*            | 七牛空间地域                                   |
+| *bucket*          | 七牛*bucket*                                   |
+| *debugFlag*       | 是否开启debug                                  |
+| *Filterdirectory* | 需要过滤的文件夹                               |
 
 **aliConfig ** 阿里oss上传配置
 
-| 字段名            | 描述                                |
-| ----------------- | ----------------------------------- |
-| *region*          | oss *region*                        |
-| *bucket*          | oss *bucket*                        |
-| *bucketPath*      | 需要上传的oss指定目录               |
-| *originPath*      | 本地需要上传的目录                  |
-| *filterFile*      | 本地需要过滤的文件 此文件不会被上传 |
-| *accessKeyId*     | oss *accessKeyId*                   |
-| *accessKeySecret* | oss *accessKeySecret*               |
+| 字段名            | 描述                                           |
+| ----------------- | ---------------------------------------------- |
+| *region*          | oss *region*                                   |
+| *bucket*          | oss *bucket*                                   |
+| *bucketPath*      | 需要上传的oss指定目录                          |
+| *originPath*      | 本地需要上传的目录                             |
+| *filterFiles*     | 需要过滤的文件名集合 默认:[],如:['index.html'] |
+| *accessKeyId*     | oss *accessKeyId*                              |
+| *accessKeySecret* | oss *accessKeySecret*                          |
+| *Filterdirectory* | 需要过滤的文件夹                               |
 
 serveConfig 云服务器上传配置
 

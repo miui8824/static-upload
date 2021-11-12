@@ -22,17 +22,23 @@ const ossUpload = (opts = {}) => {
   });
 
   let uploadFiles;
+  function bouncer(arr) {
+    // 请把你的代码写在这里
+    return arr.filter((item) => !!item);
+  }
 
   if (fs.statSync(baseDir).isFile()) {
     uploadFiles = [baseDir];
   } else {
-    const filearr = globby.sync(['**/*.*'], { cwd: baseDir }).map((p) => {
+    const newfilterFiles = opts.filterFiles || [];
+    if (!Array.isArray(newfilterFiles)) {
+      console.log(`filterFiles is not a Array  please edit config filterFiles:[${opts.filterFiles}]`);
+      return;
+    }
+    const ignore = bouncer([`${opts.Filterdirectory}`, ...newfilterFiles]);
+    const filearr = globby.sync(['**/*.*'], { cwd: baseDir, ignore: ignore }).map((p) => {
       return p;
     });
-    if (filearr.includes(opts.filterFile)) {
-      const filterFileIndex = filearr.indexOf(opts.filterFile);
-      filearr.splice(filterFileIndex, 1);
-    }
     uploadFiles = filearr;
   }
   debug('uploadFiles => %j', uploadFiles);
