@@ -34,7 +34,7 @@ const uploadProject = (uploadconfig) => {
             console.log(err, 20);
             if (!err) {
               console.log('servers upload success');
-              isGzip ? deployProject(conn) : conn.end();
+              isGzip ? deployProject(conn, shell) : conn.end();
             }
 
             // iszip&&deployProject(conn)
@@ -52,7 +52,7 @@ const uploadProject = (uploadconfig) => {
     });
 };
 // 利用 shell 方法部署项目
-function deployProject() {
+function deployProject(conn, shell) {
   conn.shell((_err, stream) => {
     stream
       .end(shell)
