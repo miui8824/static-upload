@@ -23,7 +23,6 @@ class StaticUpload {
     }
   }
   async yunServerUpload(){
-    console.log(this.SeverConfig,26)
     if(!this.SeverConfig){
       console.log('请配置云服务器相关信息')
       return
