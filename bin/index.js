@@ -1,7 +1,8 @@
 const { qiniuUpload } = require('./upload-qiniu');
 const { ossUpload } = require('./aliupload');
 const { uploadProject } = require('./upload');
-const pkgpath = path.join(process.cwd(),'./package.json')
+const path = require('path')
+const pkgpath = path.join(process.cwd(), './package.json')
 const pkg = require(pkgpath)
 const pkgversion = +pkg.version.split('.').join('')
 
@@ -34,9 +35,9 @@ class StaticUpload {
     uploadProject(this.SeverConfig)
   }
   async deleteOssfile (client, prefix) {
-    if(!prefix){
+    if (!prefix) {
       console.log('请输入匹配前缀')
-      return 
+      return
     }
     let continuationToken = null
     let files = []
