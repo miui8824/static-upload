@@ -40,7 +40,6 @@ class StaticUpload {
     }
     let continuationToken = null
     let files = []
-    const prefix = `shop-admin/${env}`
     do {
       const result = await client.listV2({
         'continuation-token': continuationToken,
