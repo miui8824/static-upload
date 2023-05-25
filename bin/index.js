@@ -69,7 +69,7 @@ class StaticUpload {
     })
       //保留最新的2个版本 防止用户浏览器缓存 多保留一个版本 安全起见
     const versionlatest = reservation.sort((a, b) => b - a).slice(0, 2)
-    console.log(`需要保留的版本:${versionlatest.join(',')},所有版本:${reseration.join(',')}`)
+    console.log(`需要保留的版本:${versionlatest.join(',')},所有版本:${reservation.join(',')}`)
     const deleteFiles = files.filter(item => {
       const version = item.name.split('/')[prefixIndex]
       const versionumber = +(version.split('.').join(''))
