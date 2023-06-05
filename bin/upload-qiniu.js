@@ -74,7 +74,7 @@ const startUpload = (qiniuConfig) => {
     // 构建上传策略函数
     const uptoken = (bucket, key) => {
       const options = {
-        scope: bucket + ':' + key,
+        scope: `${bucket}`,
       };
       const putPolicy = new qiniu.rs.PutPolicy(options);
       return putPolicy.uploadToken(mac);
@@ -86,9 +86,10 @@ const startUpload = (qiniuConfig) => {
       });
     };
     // 构造上传函数
-    const uploadFile = (uptoken, key, localFile) => {
+    const uploadFile = (uptoken, uploadkey, localFile) => {
       const formUploader = new qiniu.form_up.FormUploader(config);
       const putExtra = new qiniu.form_up.PutExtra();
+      const key = qiniuConfig.bucketPath + uploadkey
       formUploader.putFile(uptoken, key, localFile, putExtra, function (err, respBody, respInfo) {
         if (err) {
           allUploadIsSuccess = false;
@@ -168,13 +169,13 @@ const startUpload = (qiniuConfig) => {
       } else {
         console.log('there is not have extra file need to delete');
         if (initFirst) {
-          writeQnlog();
+          // writeQnlog();
         } else {
           refreshCDN(needUpload);
         }
       }
       console.log('start servers file');
-      resolve(200);
+      resolve({ bucketManager: new qiniu.rs.BucketManager(mac, config) });
     };
     const writeQnlog = () => {
       if (!allUploadIsSuccess || !allRefreshIsSuccess) {
@@ -187,12 +188,12 @@ const startUpload = (qiniuConfig) => {
           } else {
             console.log(
               '失败日志已写入' +
-                failedUploadLog +
-                '，请运行 npm run upload2qiniu ' +
-                argvArr[0] +
-                ' failed 重新' +
-                (allUploadIsSuccess ? '' : '上传') +
-                (allRefreshIsSuccess ? '' : '刷新')
+              failedUploadLog +
+              '，请运行 npm run upload2qiniu ' +
+              argvArr[0] +
+              ' failed 重新' +
+              (allUploadIsSuccess ? '' : '上传') +
+              (allRefreshIsSuccess ? '' : '刷新')
             );
           }
         });
@@ -348,19 +349,8 @@ const startUpload = (qiniuConfig) => {
         compareFile(path);
       });
     });
-    //   // 改变index.html中的文件引用
-    //   fs.readFile(originPath + '/' + originFile, fileEncodeType, (err, data) => {
-    //     if (err) throw err
-    //     data = data.replace(
-    //       /((href=['"])|(src=['"]))(?!http:)(?!https:)[/]?([^/])/g,
-    //       '$1' + cdn + '$4
-    //     )
-    //     // console.log(data);
-    //     fs.writeFile(originPath + '/' + originFile, data, err => {
-    //       if (err) throw err
-    //       console.log('index.html is change success')
-    //     })
-    //   })
+    resolve({ qiniu, mac, config });
+
   });
 };
 module.exports = {

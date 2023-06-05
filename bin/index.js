@@ -13,10 +13,46 @@ class StaticUpload {
     this.aliConfig = aliConfig;
   }
 
-  async qiniuUpload () {
-    const res = await qiniuUpload(this.QiniuConfig);
-    if (res === 200) {
+  async qiniuUpload (prefix) {
+    const { qiniu, mac, config } = await qiniuUpload(this.QiniuConfig);
+    const bucketManager = new qiniu.rs.BucketManager(mac, config)
+    if (qiniu) {
+      const prefixIndex = prefix.split('/').length
+      const versionsobj = new Map()
+      bucketManager.listPrefix(this.QiniuConfig.bucket, { limit: 99999, prefix }, (err, respBody) => {
+        respBody.items.map(item => {
+          const names = item.key.split('/')
+          const version = names[prefixIndex]
+          versionsobj.set(version, version)
+        })
+        // 获取所有版本号
+        // 需要保留的版本号
+        let reservation = []
+        Array.from(versionsobj.keys()).map(item => {
+          const versionstr = +(item.split('.').join(''))
+          if (!isNaN(versionstr) && versionstr <= pkgversion) {
+            reservation.push(versionstr)
+          }
+        })
+        //保留最新的2个版本 防止用户浏览器缓存 多保留一个版本 安全起见
+        const versionlatest = reservation.sort((a, b) => b - a).slice(0, 2)
+        console.log(`需要保留的版本:${versionlatest.join(',')},所有版本:${reservation.join(',')}`)
+        const deleteFiles = respBody.items.filter(item => {
+          const version = item.key.split('/')[prefixIndex]
+          const versionumber = +(version.split('.').join(''))
+          return !versionlatest.includes(versionumber)
+        })
+        const deleteOption = deleteFiles.map(item => {
+          return qiniu.rs.deleteOp(this.QiniuConfig.bucket, item.key)
+        })
+        bucketManager.batch(deleteOption, (err, respBody) => {
+          console.log(`总匹配文件个数${respBody.items},需删除垃圾文件个数${deleteOption.length}，删除成功：${respBody.length}个`)
+
+        })
+
+      })
       this.SeverConfig && uploadProject(this.SeverConfig);
+
     }
   }
 
@@ -34,6 +70,7 @@ class StaticUpload {
     }
     uploadProject(this.SeverConfig)
   }
+
   async deleteOssfile (client, prefix) {
     if (!prefix) {
       console.log('请输入匹配前缀')
@@ -67,7 +104,7 @@ class StaticUpload {
         reservation.push(versionstr)
       }
     })
-      //保留最新的2个版本 防止用户浏览器缓存 多保留一个版本 安全起见
+    //保留最新的2个版本 防止用户浏览器缓存 多保留一个版本 安全起见
     const versionlatest = reservation.sort((a, b) => b - a).slice(0, 2)
     console.log(`需要保留的版本:${versionlatest.join(',')},所有版本:${reservation.join(',')}`)
     const deleteFiles = files.filter(item => {
