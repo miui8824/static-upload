@@ -39,7 +39,7 @@ class StaticUpload {
     if (qiniu) {
       const prefixIndex = config.prefix.split('/').length
       const versionsobj = new Map()
-      bucketManager.listPrefix(this.QiniuConfig.bucket, { limit: 99999, prefix }, (err, respBody) => {
+      bucketManager.listPrefix(this.QiniuConfig.bucket, { limit: 99999, prefix: config.prefix }, (err, respBody) => {
         respBody.items.map(item => {
           const names = item.key.split('/')
           const version = names[prefixIndex]
