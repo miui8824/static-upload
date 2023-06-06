@@ -65,10 +65,16 @@ class StaticUpload {
         const deleteOption = deleteFiles.map(item => {
           return qiniu.rs.deleteOp(this.QiniuConfig.bucket, item.key)
         })
-        bucketManager.batch(deleteOption, (err, respBody) => {
-          console.log(`总匹配文件个数${respBody.items},需删除垃圾文件个数${deleteOption.length}，删除成功：${respBody.length}个`)
+        if (deleteOption.length) {
+          bucketManager.batch(deleteOption, (err, deleteBody, refInfo) => {
+            console.log(`总匹配文件个数${respBody.items.length},需删除垃圾文件个数${deleteOption.length}，删除成功：${deleteBody.length}个`)
 
-        })
+          })
+          return
+        }
+        console.log(`总匹配文件个数${respBody.items.length},无需删除`)
+
+
 
       })
 
