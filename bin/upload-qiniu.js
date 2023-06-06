@@ -74,7 +74,7 @@ const startUpload = (qiniuConfig) => {
     // 构建上传策略函数
     const uptoken = (bucket, key) => {
       const options = {
-        scope: `${bucket}`,
+        scope: `${bucket}:${key}`,
       };
       const putPolicy = new qiniu.rs.PutPolicy(options);
       return putPolicy.uploadToken(mac);
@@ -86,10 +86,9 @@ const startUpload = (qiniuConfig) => {
       });
     };
     // 构造上传函数
-    const uploadFile = (uptoken, uploadkey, localFile) => {
+    const uploadFile = (uptoken, key, localFile) => {
       const formUploader = new qiniu.form_up.FormUploader(config);
       const putExtra = new qiniu.form_up.PutExtra();
-      const key = qiniuConfig.bucketPath + uploadkey
       formUploader.putFile(uptoken, key, localFile, putExtra, function (err, respBody, respInfo) {
         if (err) {
           allUploadIsSuccess = false;
@@ -287,11 +286,13 @@ const startUpload = (qiniuConfig) => {
         // 上传到七牛后保存的文件名
         const key = path.replace('dist/', '');
 
+        const uploadkey = qiniuConfig.bucketPath + key
+
         // 生成上传 Token
-        const token = uptoken(bucket, key);
+        const token = uptoken(bucket, uploadkey);
 
         // 调用uploadFile上传
-        uploadFile(token, key, filePath);
+        uploadFile(token, uploadkey, filePath);
       });
     };
 
