@@ -121,7 +121,7 @@ const startUpload = (qiniuConfig) => {
       qndata = {};
       needUpload = needUpload.map((it) => originPath + '/' + it);
       uploadFilesByArr(needUpload);
-      refreshCDN(_difference(failObj.refreshArr, needUpload));
+      // refreshCDN(_difference(failObj.refreshArr, needUpload));
     };
     // 全部文件上传完成后根据日志对七牛云上的数据做处理 删除 --> 刷新
     const dealFileQN = () => {
@@ -162,7 +162,7 @@ const startUpload = (qiniuConfig) => {
             }
           }
           // writeQnlog()
-          refreshCDN(needUpload);
+          // refreshCDN(needUpload);
         });
         // deleteKeys(qndataKeys)
       } else {
@@ -170,7 +170,7 @@ const startUpload = (qiniuConfig) => {
         if (initFirst) {
           // writeQnlog();
         } else {
-          refreshCDN(needUpload);
+          // refreshCDN(needUpload);
         }
       }
       console.log('start servers file');
@@ -284,8 +284,8 @@ const startUpload = (qiniuConfig) => {
         // 要上传文件的本地路径
         const filePath = path;
         // 上传到七牛后保存的文件名
-        const key = path.replace('dist/', '');
-
+        const reg = new RegExp(qiniuConfig.originPath + '/', 'i')
+        const key = path.replace(reg, '');
         const uploadkey = qiniuConfig.bucketPath + key
 
         // 生成上传 Token
