@@ -13,11 +13,31 @@ class StaticUpload {
     this.aliConfig = aliConfig;
   }
 
-  async qiniuUpload (prefix) {
+  async qiniuUpload () {
     const { qiniu, mac, config } = await qiniuUpload(this.QiniuConfig);
-    const bucketManager = new qiniu.rs.BucketManager(mac, config)
+    this.SeverConfig && uploadProject(this.SeverConfig);
+    return { qiniu, mac, config }
+  }
+
+  async aliUpload () {
+    const { result, client } = await ossUpload(this.aliConfig);
+    if (result && result.length !== 0) {
+      this.SeverConfig && uploadProject(this.SeverConfig);
+    }
+    return client
+  }
+  async yunServerUpload () {
+    if (!this.SeverConfig) {
+      console.log('请配置云服务器相关信息')
+      return
+    }
+    uploadProject(this.SeverConfig)
+  }
+  // 七牛根据业务自定义删除文件
+  async deleteQiniufile (qiniu, config) {
+    const bucketManager = new qiniu.rs.BucketManager(config.mac, config.config)
     if (qiniu) {
-      const prefixIndex = prefix.split('/').length
+      const prefixIndex = config.prefix.split('/').length
       const versionsobj = new Map()
       bucketManager.listPrefix(this.QiniuConfig.bucket, { limit: 99999, prefix }, (err, respBody) => {
         respBody.items.map(item => {
@@ -51,26 +71,10 @@ class StaticUpload {
         })
 
       })
-      this.SeverConfig && uploadProject(this.SeverConfig);
 
     }
   }
-
-  async aliUpload () {
-    const { result, client } = await ossUpload(this.aliConfig);
-    if (result && result.length !== 0) {
-      this.SeverConfig && uploadProject(this.SeverConfig);
-    }
-    return client
-  }
-  async yunServerUpload () {
-    if (!this.SeverConfig) {
-      console.log('请配置云服务器相关信息')
-      return
-    }
-    uploadProject(this.SeverConfig)
-  }
-
+  //  这是根据业务自定义删除阿里云oss文件
   async deleteOssfile (client, prefix) {
     if (!prefix) {
       console.log('请输入匹配前缀')
