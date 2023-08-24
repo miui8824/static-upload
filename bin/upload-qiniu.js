@@ -228,7 +228,7 @@ const startUpload = (qiniuConfig) => {
             // console.log(jsonBody);
           }
           if (index === needRefreshArr.length - 1) {
-            writeQnlog();
+            // writeQnlog();
           }
         });
       });
