@@ -121,7 +121,7 @@ const startUpload = (qiniuConfig) => {
       qndata = {};
       needUpload = needUpload.map((it) => originPath + '/' + it);
       uploadFilesByArr(needUpload);
-      // refreshCDN(_difference(failObj.refreshArr, needUpload));
+      refreshCDN(_difference(failObj.refreshArr, needUpload));
     };
     // 全部文件上传完成后根据日志对七牛云上的数据做处理 删除 --> 刷新
     const dealFileQN = () => {
@@ -162,7 +162,7 @@ const startUpload = (qiniuConfig) => {
             }
           }
           // writeQnlog()
-          // refreshCDN(needUpload);
+          refreshCDN(needUpload);
         });
         // deleteKeys(qndataKeys)
       } else {
@@ -170,7 +170,7 @@ const startUpload = (qiniuConfig) => {
         if (initFirst) {
           // writeQnlog();
         } else {
-          // refreshCDN(needUpload);
+          refreshCDN(needUpload);
         }
       }
       console.log('start servers file');
