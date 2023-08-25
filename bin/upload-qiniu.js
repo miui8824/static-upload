@@ -20,7 +20,7 @@ const startUpload = (qiniuConfig) => {
     //   process.exit()
     // }
     const bucket = qiniuConfig.bucket;
-    const cdn = '';
+    const cdn = qiniuConfig.cdn;
 
     const { originPath, oldOriginPath, filterFiles, Filterdirectory, fileEncodeType = 'utf8', qndataFile = 'qndata.json', failedUploadLog = 'failedlog.json' } = qiniuConfig;
 
@@ -121,7 +121,7 @@ const startUpload = (qiniuConfig) => {
       qndata = {};
       needUpload = needUpload.map((it) => originPath + '/' + it);
       uploadFilesByArr(needUpload);
-      refreshCDN(_difference(failObj.refreshArr, needUpload));
+      qiniuConfig.isRefreshcdn && refreshCDN(_difference(failObj.refreshArr, needUpload));
     };
     // 全部文件上传完成后根据日志对七牛云上的数据做处理 删除 --> 刷新
     const dealFileQN = () => {
@@ -161,16 +161,17 @@ const startUpload = (qiniuConfig) => {
               debugFlag && console.log(respBody);
             }
           }
-          // writeQnlog()
-          refreshCDN(needUpload);
+          writeQnlog()
+          qiniuConfig.isRefreshcdn && refreshCDN(needUpload);
         });
         // deleteKeys(qndataKeys)
       } else {
         console.log('there is not have extra file need to delete');
+        console.log(initFirst, 170)
         if (initFirst) {
-          // writeQnlog();
+          writeQnlog();
         } else {
-          refreshCDN(needUpload);
+          qiniuConfig.isRefreshcdn &&  refreshCDN(needUpload);
         }
       }
       console.log('start servers file');
@@ -212,9 +213,9 @@ const startUpload = (qiniuConfig) => {
       const cdnManager = new qiniu.cdn.CdnManager(mac);
       // 刷新链接，单次请求链接不可以超过100个，如果超过，请分批发送请求
       needRefreshArr = _array.chunk(needRefreshArr, 100);
-      needRefreshArr.forEach((item, index) => {
-        item = item.map((it) => {
-          return cdn + it.replace('dist/', '');
+      needRefreshArr.forEach((files, index) => {
+        const item = files.map((it) => {
+          return cdn + '/' + qiniuConfig.bucketPath + it.replace(qiniuConfig.originPath + '/', '');
         });
         cdnManager.refreshUrls(item, function (err, respBody, respInfo) {
           if (err) {
@@ -225,10 +226,10 @@ const startUpload = (qiniuConfig) => {
           }
           if (respInfo.statusCode == 200) {
             // let jsonBody = JSON.parse(respBody);
-            // console.log(jsonBody);
+            console.log(respInfo.data);
           }
           if (index === needRefreshArr.length - 1) {
-            // writeQnlog();
+            writeQnlog();
           }
         });
       });
