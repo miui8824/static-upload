@@ -170,6 +170,8 @@ const startUpload = (qiniuConfig) => {
         console.log(initFirst, 170)
         if (initFirst) {
           writeQnlog();
+          qiniuConfig.isRefreshcdn &&  refreshCDN(needUpload);
+
         } else {
           qiniuConfig.isRefreshcdn &&  refreshCDN(needUpload);
         }
